@@ -28,6 +28,36 @@ const wordSearch = (letters, word) => {
     if (l.includes(word) || l.includes(reversed)) return true;
   }
 
+  // check diagonals helper function
+  const checkDiag = (matrix, word, idx, fwd) => {
+    if (word.length === 0) return true;
+    if (matrix.length === 0) return false;
+    if (idx >= matrix[0].length || idx < 0) return false;
+    if (matrix[0][idx] === word[0]) {
+      const nextIdx = fwd ? idx + 1 : idx - 1;
+      return checkDiag(matrix.slice(1), word.slice(1), nextIdx, fwd);
+    }
+    return false;
+  };
+
+  // iterate through letters matrix one letter at a time checking for diagonal matches
+  for (const [i, row] of letters.entries()) {
+    for (const [j, letter] of row.entries()) {
+      if (letter === word[0]) {
+        if (checkDiag(letters.slice(i + 1), word.slice(1), j + 1, true))
+          return true;
+        if (checkDiag(letters.slice(i + 1), word.slice(1), j - 1, false))
+          return true;
+      }
+      if (letter === reversed[0]) {
+        if (checkDiag(letters.slice(i + 1), reversed.slice(1), j + 1, true))
+          return true;
+        if (checkDiag(letters.slice(i + 1), reversed.slice(1), j - 1, false))
+          return true;
+      }
+    }
+  }
+
   return false;
 };
 
